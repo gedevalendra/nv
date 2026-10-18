@@ -2847,7 +2847,20 @@
             getEffectiveWeddingRole() {
                 return this.getEffectiveRole();
             }
+            // Batas bawah tawaran seorang pemain di putaran ini:
+            // - minBid (nilai tertinggi putaran sebelumnya), atau
+            // - tawaran lawan yang sudah dikunci (kalau lawan jalan duluan)
+            getBidFloor(w, role) {
+                const opp = role === 'A' ? 'B' : 'A';
+                const myMin = w['minBid' + role] || 0;
+                const oppLocked = w['locked' + opp] ? (w['bid' + opp] || 0) : 0;
+                return Math.max(myMin, oppLocked);
+            }
 
+            // Tawaran efektif = tidak boleh di bawah floor, dan tidak boleh melebihi sisa modal
+            getEffectiveBid(w, role) {
+                return Math.min(w['money' + role], Math.max(w['bid' + role] || 0, this.getBidFloor(w, role)));
+            }
             addMoneyBid(amount) {
                 const w = this.state.wedding;
                 if (w.status !== 'BIDDING') return;
@@ -2855,7 +2868,6 @@
                 const role = this.getEffectiveWeddingRole();
                 if (!role) return;
 
-                // Hanya pemain yang sedang mendapat giliran yang bisa memilih harga
                 if (w.currentTurn !== role) {
                     const turnOwnerName = w.currentTurn === 'A' ? this.state.playerAName : this.state.playerBName;
                     this.showToast(`Tunggu giliranmu! Sekarang giliran ${turnOwnerName} memilih harga.`, 'amber');
@@ -2870,14 +2882,14 @@
                 }
 
                 const myBid = role === 'A' ? w.bidA : w.bidB;
-                const myMin = role === 'A' ? w.minBidA : w.minBidB;
                 const myMoney = role === 'A' ? w.moneyA : w.moneyB;
-                const base = Math.max(myBid, myMin);
+                // Mulai dari nilai tertinggi yang berlaku (floor), lalu ditambah nominal yang diklik
+                const base = Math.max(myBid, this.getBidFloor(w, role));
                 const next = base + amount;
                 const res = this.getTheme().resName;
 
                 if (next > myMoney) {
-                    this.showToast(`${res}mu tidak cukup! Sisa: ${this.fmt(myMoney)}`, 'rose');
+                    this.showToast(`${res}mu tidak cukup untuk naik ke ${this.fmt(next)}! Sisa: ${this.fmt(myMoney)}`, 'rose');
                     sfx.wrong();
                     return;
                 }
@@ -2890,7 +2902,6 @@
                 if (infoEl) infoEl.textContent = `+${this.fmt(amount)} → total tawaranmu ${this.fmt(next)}`;
                 this.pushStateToCloud();
             }
-
             addRandomMysteryMoney() {
                 const rndList = this.getTheme().rnd || [1000, 5000, 10000, 20000, 30000, 40000, 50000];
                 const pick = rndList[Math.floor(Math.random() * rndList.length)];
@@ -2911,12 +2922,13 @@
                     this.showToast('Tawaranmu sudah terkunci!', 'amber');
                     return;
                 }
-                if (role === 'A') w.bidA = w.minBidA; else w.bidB = w.minBidB;
+                // Kembali ke batas bawah (bukan ke 0)
+                const floorBid = Math.min(role === 'A' ? w.moneyA : w.moneyB, this.getBidFloor(w, role));
+                if (role === 'A') w.bidA = floorBid; else w.bidB = floorBid;
                 w['stamp' + role] = Date.now();
                 sfx.tick();
                 this.pushStateToCloud();
             }
-
             lockCurrentPlayerBid() {
                 const w = this.state.wedding;
                 if (w.status !== 'BIDDING') return;
@@ -2930,15 +2942,17 @@
                     return;
                 }
 
-                const my = role === 'A' ? w.bidA : w.bidB;
                 const money = role === 'A' ? w.moneyA : w.moneyB;
-                const min = role === 'A' ? w.minBidA : w.minBidB;
-                const bid = Math.max(my, min);
+                const floor = this.getBidFloor(w, role);
+                const bid = this.getEffectiveBid(w, role);
 
                 if (money > 0 && bid <= 0) {
                     this.showToast('Pilih nominal harga dulu (1K - 50K) sebelum mengunci!', 'amber');
                     sfx.wrong();
                     return;
+                }
+                if (bid < floor) {
+                    this.showToast(`Sisa modalmu kurang dari ${this.fmt(floor)}, jadi kamu all-in ${this.fmt(bid)}.`, 'amber');
                 }
 
                 w['stamp' + role] = Date.now();
@@ -3080,9 +3094,13 @@
                 const nextFirst = Math.random() < 0.5 ? 'A' : 'B';
                 const nextFirstName = nextFirst === 'A' ? this.state.playerAName : this.state.playerBName;
 
+                // Lanjut: kedua pemain start dari nilai tertinggi (mis. A 50, B 51 -> keduanya mulai 51)
+                const highest = Math.max(w.bidA, w.bidB);
                 w.attemptCount += 1;
-                w.minBidA = w.bidA;
-                w.minBidB = w.bidB;
+                w.minBidA = highest;
+                w.minBidB = highest;
+                w.bidA = Math.min(w.moneyA, highest);
+                w.bidB = Math.min(w.moneyB, highest);
                 w.lockedA = false;
                 w.lockedB = false;
                 w.skipVoteA = false;
@@ -3094,8 +3112,7 @@
                 w.status = 'BIDDING';
                 w.escalationAlert = true;
 
-                w.logs.unshift(`⚡ Pilihan sama! Putaran #${w.attemptCount} — 🎲 Undian baru: ${nextFirstName} jalan duluan!`);
-                this.showToast(`Pilihan sama! Tawar ulang, giliran ${nextFirstName} jalan duluan.`, 'amber');
+w.logs.unshift(`⚡ Pilihan sama! Putaran #${w.attemptCount} — start dari tawaran tertinggi ${this.fmt(highest)}. 🎲 ${nextFirstName} jalan duluan!`);                this.showToast(`Pilihan sama! Tawar ulang, giliran ${nextFirstName} jalan duluan.`, 'amber');
                 this.pushStateToCloud();
             }
 
@@ -4184,13 +4201,13 @@ m.logs.unshift(`💥 ${myName} membuka BOM! (-1 ❤️ & -10 Poin)`);
 
                     const highest = Math.max(w.bidA || 0, w.bidB || 0);
                     document.getElementById('weddingHighestText').textContent = highest > 0 ? this.fmt(highest) : 'Belum ada tawaran';
-                    document.getElementById('weddingHighestHint').textContent = w.currentTurn === role ? '🔥 Giliranmu memilih harga!' : `⏳ Menunggu ${turnName}...`;
+                    const floor = this.getBidFloor(w, role);
+                    document.getElementById('weddingHighestHint').textContent = w.currentTurn === role
+                        ? (floor > 0 ? `🔥 Giliranmu! Mulai dari ${this.fmt(floor)}` : '🔥 Giliranmu memilih harga!')
+                        : `⏳ Menunggu ${turnName}...`;
 
-                    const myBid = role === 'A' ? w.bidA : w.bidB;
-                    const myMin = role === 'A' ? w.minBidA : w.minBidB;
-                    document.getElementById('currentPlayerBidDisplay').textContent = this.fmt(Math.max(myBid, myMin));
-                    document.getElementById('minBidNotice').textContent = myMin > 0 ? `Minimal tawaran putaran ini: ${this.fmt(myMin)}` : '';
-
+                    document.getElementById('currentPlayerBidDisplay').textContent = this.fmt(this.getEffectiveBid(w, role));
+                    document.getElementById('minBidNotice').textContent = floor > 0 ? `Tidak boleh di bawah ${this.fmt(floor)}` : '';
                     const denomGrid = document.getElementById('weddingDenomGrid');
                     denomGrid.innerHTML = (theme.steps || DENOM_STEPS_RUPIAH).map(st => `
                         <button onclick="window.app.addMoneyBid(${st.v})" class="btn-money py-2.5 px-3 rounded-md bg-slate-800 hover:bg-amber-500 hover:text-slate-950 border border-amber-500/30 font-display font-extrabold text-sm text-amber-300 transition flex flex-col items-center">
