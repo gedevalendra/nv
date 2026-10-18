@@ -180,68 +180,75 @@
             background: #334155;
             border-radius: 9999px;
         }
+
         /* Animasi Masuk ala Draft Pick MLBB (Meluncur dari kiri/kanan dengan efek banting) */
-@keyframes mlbbSlideIn {
-    0% {
-        transform: scale(0.5) translateY(-100px);
-        opacity: 0;
-        filter: brightness(2);
-    }
-    60% {
-        transform: scale(1.05) translateY(10px);
-        opacity: 1;
-        filter: brightness(1.2);
-    }
-    100% {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-        filter: brightness(1);
-    }
-}
+        @keyframes mlbbSlideIn {
+            0% {
+                transform: scale(0.5) translateY(-100px);
+                opacity: 0;
+                filter: brightness(2);
+            }
 
-/* Animasi Kilatan Petir / Slash Listrik */
-@keyframes mlbbLightningSlash {
-    0%, 100% {
-        box-shadow: 0 0 15px rgba(56, 189, 248, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.2);
-        border-color: #38bdf8; /* Biru Energi */
-    }
-    50% {
-        box-shadow: 0 0 35px rgba(250, 204, 21, 0.8), inset 0 0 25px rgba(250, 204, 21, 0.5);
-        border-color: #facc15; /* Kuning Petir Emas */
-    }
-}
+            60% {
+                transform: scale(1.05) translateY(10px);
+                opacity: 1;
+                filter: brightness(1.2);
+            }
 
-/* Kelas Efek Animasi MLBB */
-.animate-mlbb-popup {
-    animation: mlbbSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+                filter: brightness(1);
+            }
+        }
 
-.animate-mlbb-lightning {
-    animation: mlbbLightningSlash 0.5s ease-in-out infinite;
-}
+        /* Animasi Kilatan Petir / Slash Listrik */
+        @keyframes mlbbLightningSlash {
 
-/* Efek garis laser miring di background pop-up */
-.mlbb-slash-bg {
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 27, 75, 0.95) 100%);
-    position: relative;
-    overflow: hidden;
-}
-.mlbb-slash-bg::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 15px,
-        rgba(250, 204, 21, 0.05) 15px,
-        rgba(250, 204, 21, 0.05) 30px
-    );
-    pointer-events: none;
-}
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(56, 189, 248, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.2);
+                border-color: #38bdf8;
+                /* Biru Energi */
+            }
+
+            50% {
+                box-shadow: 0 0 35px rgba(250, 204, 21, 0.8), inset 0 0 25px rgba(250, 204, 21, 0.5);
+                border-color: #facc15;
+                /* Kuning Petir Emas */
+            }
+        }
+
+        /* Kelas Efek Animasi MLBB */
+        .animate-mlbb-popup {
+            animation: mlbbSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .animate-mlbb-lightning {
+            animation: mlbbLightningSlash 0.5s ease-in-out infinite;
+        }
+
+        /* Efek garis laser miring di background pop-up */
+        .mlbb-slash-bg {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 27, 75, 0.95) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mlbb-slash-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 15px,
+                    rgba(250, 204, 21, 0.05) 15px,
+                    rgba(250, 204, 21, 0.05) 30px);
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -249,35 +256,37 @@
 
     <canvas id="confettiCanvas"></canvas>
 
-<!-- POP-UP NOTIFIKASI TAWARAN (GAYA DRAFT PICK MOBILE LEGENDS) -->
-<div id="modalBidPopup"
-    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 pointer-events-auto">
-    <div id="modalBidPopupCard"
-        class="mlbb-slash-bg max-w-md w-full rounded-2xl p-6 border-2 border-amber-400 shadow-[0_0_50px_rgba(245,158,11,0.3)] space-y-4 text-center animate-mlbb-popup animate-mlbb-lightning relative">
-        
-        <!-- Efek Badge Header ala Turnamen -->
-        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-orange-500 text-slate-950 font-display font-black text-xs uppercase tracking-widest shadow-lg border border-white/40 flex items-center gap-1.5">
-            <i class="fa-solid fa-bolt text-slate-950 animate-bounce"></i> 
-            <span id="bidPopupTag">DRAFT BIDDING ALERT</span>
-        </div>
+    <!-- POP-UP NOTIFIKASI TAWARAN (GAYA DRAFT PICK MOBILE LEGENDS) -->
+    <div id="modalBidPopup"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 pointer-events-auto">
+        <div id="modalBidPopupCard"
+            class="mlbb-slash-bg max-w-md w-full rounded-2xl p-6 border-2 border-amber-400 shadow-[0_0_50px_rgba(245,158,11,0.3)] space-y-4 text-center animate-mlbb-popup animate-mlbb-lightning relative">
 
-        <div id="bidPopupIcon" class="text-5xl pt-2 filter drop-shadow-[0_0_12px_rgba(250,204,21,0.6)]">⚡</div>
-        
-        <div class="space-y-1">
-            <h3 id="bidPopupHeadline" class="font-display font-black text-2xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-400 tracking-wide drop-shadow-md">
-                Player A Menawar Rp 50.000!
-            </h3>
-            <p id="bidPopupSubtext" class="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
-                Giliran lawan untuk menambahkan nominal atau melepas tawaran.
-            </p>
-        </div>
+            <!-- Efek Badge Header ala Turnamen -->
+            <div
+                class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-orange-500 text-slate-950 font-display font-black text-xs uppercase tracking-widest shadow-lg border border-white/40 flex items-center gap-1.5">
+                <i class="fa-solid fa-bolt text-slate-950 animate-bounce"></i>
+                <span id="bidPopupTag">DRAFT BIDDING ALERT</span>
+            </div>
 
-        <button onclick="window.app.closeBidPopup()"
-            class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-display font-black text-xs sm:text-sm tracking-wider uppercase shadow-lg shadow-cyan-500/30 transition transform active:scale-95 border border-cyan-300/40">
-            SIAP & LANJUTKAN DUEL <i class="fa-solid fa-arrow-right ml-1"></i>
-        </button>
+            <div id="bidPopupIcon" class="text-5xl pt-2 filter drop-shadow-[0_0_12px_rgba(250,204,21,0.6)]">⚡</div>
+
+            <div class="space-y-1">
+                <h3 id="bidPopupHeadline"
+                    class="font-display font-black text-2xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-400 tracking-wide drop-shadow-md">
+                    Player A Menawar Rp 50.000!
+                </h3>
+                <p id="bidPopupSubtext" class="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+                    Giliran lawan untuk menambahkan nominal atau melepas tawaran.
+                </p>
+            </div>
+
+            <button onclick="window.app.closeBidPopup()"
+                class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-display font-black text-xs sm:text-sm tracking-wider uppercase shadow-lg shadow-cyan-500/30 transition transform active:scale-95 border border-cyan-300/40">
+                SIAP & LANJUTKAN DUEL <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+        </div>
     </div>
-</div>
 
     <!-- HEADER -->
     <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-3 sm:px-6 py-2.5">
@@ -288,10 +297,10 @@
                     <i class="fa-solid fa-bolt text-white"></i>
                 </div>
                 <h1 class="font-display font-bold text-lg text-white">DuelArena</h1>
-                <span id="syncBadge"
+                <!-- <span id="syncBadge"
                     class="hidden sm:inline-flex text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 items-center gap-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Online
-                </span>
+                </span> -->
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
@@ -579,7 +588,8 @@
                                 <h3 class="text-lg font-display font-extrabold text-white">Susun & Tawar</h3>
                                 <p class="text-xs text-slate-300 mt-1 leading-relaxed">
                                     Sesi pertama tiap barang wajib kedua pemain menawar dulu! Selanjutnya lawan tinggal
-                                    <strong>menambahkan nominal</strong> atau langsung klik <strong>Lepas Tawaran</strong>.
+                                    <strong>menambahkan nominal</strong> atau langsung klik <strong>Lepas
+                                        Tawaran</strong>.
                                 </p>
                             </div>
                         </div>
@@ -755,12 +765,16 @@
                             </div>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-fuchsia-500/20 text-fuchsia-300">MODE KEJUTAN</span>
-                                    <span class="text-xs font-bold text-cyan-300"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Pilihan Acak</span>
+                                    <span
+                                        class="px-2 py-0.5 rounded text-[11px] font-bold bg-fuchsia-500/20 text-fuchsia-300">MODE
+                                        KEJUTAN</span>
+                                    <span class="text-xs font-bold text-cyan-300"><i
+                                            class="fa-solid fa-wand-magic-sparkles mr-1"></i>Pilihan Acak</span>
                                 </div>
                                 <h3 class="text-lg font-display font-extrabold text-white mt-1">Roda Game Acak</h3>
                                 <p class="text-xs text-slate-300 mt-0.5">
-                                    Bingung mau main yang mana? Biarkan sistem mengacak salah satu dari 6 game duel di atas untuk kalian mainkan sekarang!
+                                    Bingung mau main yang mana? Biarkan sistem mengacak salah satu dari 6 game duel di
+                                    atas untuk kalian mainkan sekarang!
                                 </p>
                             </div>
                         </div>
@@ -1086,7 +1100,8 @@
                         <div class="flex items-center gap-2.5">
                             <span class="text-xl">🔔</span>
                             <div>
-                                <div id="weddingLiveNotifTitle" class="font-display font-extrabold text-xs sm:text-sm text-amber-300">
+                                <div id="weddingLiveNotifTitle"
+                                    class="font-display font-extrabold text-xs sm:text-sm text-amber-300">
                                     Player A menawar Rp 50.000!
                                 </div>
                                 <div id="weddingLiveNotifSub" class="text-[11px] text-slate-300">
@@ -1104,7 +1119,8 @@
                                 <span class="text-[11px] text-slate-400 block">Tawaran Tertinggi Saat Ini</span>
                                 <span id="weddingHighestText"
                                     class="font-display font-extrabold text-xl text-white">Belum ada tawaran</span>
-                                <span id="weddingHighestBidderTag" class="text-[11px] text-amber-300 font-semibold block"></span>
+                                <span id="weddingHighestBidderTag"
+                                    class="text-[11px] text-amber-300 font-semibold block"></span>
                             </div>
                             <span id="weddingHighestHint"
                                 class="text-xs font-bold px-2.5 py-1 rounded bg-slate-800 text-slate-300 text-right">Menunggu
@@ -1113,7 +1129,8 @@
 
                         <div class="flex items-end justify-between gap-3">
                             <div>
-                                <span class="text-[11px] text-slate-400 block">Rencana Tawaranmu (Tinggal Tambah Nominal)</span>
+                                <span class="text-[11px] text-slate-400 block">Rencana Tawaranmu (Tinggal Tambah
+                                    Nominal)</span>
                                 <div id="currentPlayerBidDisplay"
                                     class="font-display font-extrabold text-3xl text-amber-400 tracking-tight">0</div>
                                 <span id="minBidNotice" class="text-[11px] text-slate-400"></span>
@@ -1651,7 +1668,8 @@
                 <div class="flex items-center gap-3">
                     <div
                         class="w-10 h-10 rounded-md bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-white">
-                        <i class="fa-solid fa-door-open"></i></div>
+                        <i class="fa-solid fa-door-open"></i>
+                    </div>
                     <div>
                         <h3 id="setupModalTitle" class="font-display font-extrabold text-lg text-white">Buat atau Gabung
                             Room</h3>
@@ -1880,20 +1898,23 @@
                 </div>
             </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-    <button onclick="window.app.openPodiumModal()" id="btnModalPodium" class="py-3 px-4 rounded-md bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-slate-950 font-display font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2">
-        <i class="fa-solid fa-trophy"></i> Podium
-    </button>
-    <button onclick="window.app.replayCurrentGame()" id="btnModalReplay" class="py-3 px-4 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-display font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
-        <i class="fa-solid fa-rotate-right"></i> Main Lagi
-    </button>
-    <button onclick="window.app.closeModalAndHub()" id="btnModalLobby" class="py-3 px-4 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 font-display font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
-        <i class="fa-solid fa-house"></i> Lobi
-    </button>
-</div>
-<div id="punishmentLockWarning" class="text-center text-xs text-amber-400 font-semibold hidden">
-    ⚠️ Pemenang wajib menekan tombol "Jatuhkan Hukuman" terlebih dahulu agar tombol Main Lagi terbuka!
-</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button onclick="window.app.openPodiumModal()" id="btnModalPodium"
+                    class="py-3 px-4 rounded-md bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-slate-950 font-display font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-trophy"></i> Podium
+                </button>
+                <button onclick="window.app.replayCurrentGame()" id="btnModalReplay"
+                    class="py-3 px-4 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-display font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Main Lagi
+                </button>
+                <button onclick="window.app.closeModalAndHub()" id="btnModalLobby"
+                    class="py-3 px-4 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 font-display font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-house"></i> Lobi
+                </button>
+            </div>
+            <div id="punishmentLockWarning" class="text-center text-xs text-amber-400 font-semibold hidden">
+                ⚠️ Pemenang wajib menekan tombol "Jatuhkan Hukuman" terlebih dahulu agar tombol Main Lagi terbuka!
+            </div>
         </div>
     </div>
 
@@ -5341,86 +5362,86 @@
                 const logEl = document.getElementById('mysteryLogList');
                 logEl.innerHTML = (m.logs || []).map(l => `<div class="py-0.5 border-b border-slate-800/60">${this.escapeHtml(l)}</div>`).join('');
             }
+checkAndRenderGameOverModal() {
+    const match = this.getActiveMatchObject();
+    const modal = document.getElementById('modalGameOver');
+    
+    // Ambil elemen tombol hukuman game over
+    const btnReplay = document.getElementById('btnModalReplay');
+    const btnLobby = document.getElementById('btnModalLobby');
+    const warnText = document.getElementById('punishmentLockWarning');
 
-            checkAndRenderGameOverModal() {
-                // Tambahkan di dalam fungsi checkAndRenderGameOverModal()
-const btnReplay = document.getElementById('btnModalReplay');
-const btnLobby = document.getElementById('btnModalLobby');
-const warnText = document.getElementById('punishmentLockWarning');
+    if (!match || match.status !== 'FINISHED') {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        return;
+    }
 
-if (btnReplay && btnLobby) {
-    // Tombol Main Lagi dan Lobi hanya bisa diklik jika hukuman sudah dikunci (punishmentLocked == true)
-    btnReplay.disabled = !match.punishmentLocked;
-    btnLobby.disabled = !match.punishmentLocked;
-    if (warnText) {
-        warnText.classList.toggle('hidden', match.punishmentLocked);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    // Kontrol tombol Main Lagi & Lobi terkunci sebelum hukuman dijatuhkan
+    if (btnReplay && btnLobby) {
+        btnReplay.disabled = !match.punishmentLocked;
+        btnLobby.disabled = !match.punishmentLocked;
+        if (warnText) {
+            warnText.classList.toggle('hidden', match.punishmentLocked);
+        }
+    }
+
+    const winRole = match.winner === 'B' ? 'B' : 'A';
+    const winName = winRole === 'A' ? this.state.playerAName : this.state.playerBName;
+    const winCode = winRole === 'A' ? this.state.playerACode : this.state.playerBCode;
+    const loseName = winRole === 'A' ? this.state.playerBName : this.state.playerAName;
+    const loseCode = winRole === 'A' ? this.state.playerBCode : this.state.playerACode;
+
+    const mySlot = this.getMyAssignedSlot();
+    const perspectiveRole = (mySlot === 'A' || mySlot === 'B') ? mySlot : this.activeRole;
+    const iAmWinner = perspectiveRole === winRole;
+
+    const banner = document.getElementById('personalOutcomeBanner');
+    const iconBadge = document.getElementById('modalPersonalIconBadge');
+    const tagEl = document.getElementById('modalPersonalPerspectiveTag');
+    const headlineEl = document.getElementById('modalPersonalHeadline');
+
+    if (iAmWinner) {
+        banner.className = 'rounded-md p-4 text-center space-y-2 border bg-emerald-950/60 border-emerald-500/50';
+        iconBadge.textContent = '🏆';
+        iconBadge.className = 'w-16 h-16 rounded-md bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-3xl';
+        tagEl.textContent = `LAYAR PEMENANG (${winName})`;
+        tagEl.className = 'inline-block text-[11px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded bg-emerald-400 text-slate-950';
+        headlineEl.textContent = '🎉 KAMU MENANG TELAK!';
+    } else {
+        banner.className = 'rounded-md p-4 text-center space-y-2 border bg-rose-950/60 border-rose-500/50';
+        iconBadge.textContent = '💀';
+        iconBadge.className = 'w-16 h-16 rounded-md bg-rose-500/20 border border-rose-400 flex items-center justify-center text-3xl';
+        tagEl.textContent = `LAYAR KALAH (${loseName})`;
+        tagEl.className = 'inline-block text-[11px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded bg-rose-500 text-white';
+        headlineEl.textContent = '💥 KAMU KALAH DI DUEL INI!';
+    }
+
+    document.getElementById('modalSummaryReason').textContent = match.reason || '';
+    document.getElementById('modalCardBadgeWin').textContent = winCode;
+    document.getElementById('modalWinnerName').textContent = winName;
+    document.getElementById('modalCardBadgeLose').textContent = loseCode;
+    document.getElementById('modalLoserName').textContent = loseName;
+
+    document.getElementById('punishmentGiverName').textContent = winName;
+    document.getElementById('punishmentTargetName').textContent = loseName;
+    document.getElementById('punishmentResultText').textContent = match.punishment || 'Menunggu keputusan pemenang...';
+
+    const lockStatus = document.getElementById('punishmentLockStatusBadge');
+    lockStatus.textContent = match.punishmentLocked ? '🔒 Hukuman Resmi Dijatuhkan!' : '⏳ Menunggu keputusan pemenang...';
+
+    document.getElementById('winnerPunishmentInputArea').classList.toggle('hidden', !iAmWinner);
+    document.getElementById('loserPunishmentWaitArea').classList.toggle('hidden', iAmWinner);
+
+    const finishKey = `${this.state.activeView}-${winRole}-${match.reason}`;
+    if (this.lastRenderedFinishKey !== finishKey) {
+        this.lastRenderedFinishKey = finishKey;
+        if (iAmWinner) this.launchConfetti();
     }
 }
-                const match = this.getActiveMatchObject();
-                const modal = document.getElementById('modalGameOver');
-                if (!match || match.status !== 'FINISHED') {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                    return;
-                }
-
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-
-                const winRole = match.winner === 'B' ? 'B' : 'A';
-                const winName = winRole === 'A' ? this.state.playerAName : this.state.playerBName;
-                const winCode = winRole === 'A' ? this.state.playerACode : this.state.playerBCode;
-                const loseName = winRole === 'A' ? this.state.playerBName : this.state.playerAName;
-                const loseCode = winRole === 'A' ? this.state.playerBCode : this.state.playerACode;
-
-                const mySlot = this.getMyAssignedSlot();
-                const perspectiveRole = (mySlot === 'A' || mySlot === 'B') ? mySlot : this.activeRole;
-                const iAmWinner = perspectiveRole === winRole;
-
-                const banner = document.getElementById('personalOutcomeBanner');
-                const iconBadge = document.getElementById('modalPersonalIconBadge');
-                const tagEl = document.getElementById('modalPersonalPerspectiveTag');
-                const headlineEl = document.getElementById('modalPersonalHeadline');
-
-                if (iAmWinner) {
-                    banner.className = 'rounded-md p-4 text-center space-y-2 border bg-emerald-950/60 border-emerald-500/50';
-                    iconBadge.textContent = '🏆';
-                    iconBadge.className = 'w-16 h-16 rounded-md bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-3xl';
-                    tagEl.textContent = `LAYAR PEMENANG (${winName})`;
-                    tagEl.className = 'inline-block text-[11px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded bg-emerald-400 text-slate-950';
-                    headlineEl.textContent = '🎉 KAMU MENANG TELAK!';
-                } else {
-                    banner.className = 'rounded-md p-4 text-center space-y-2 border bg-rose-950/60 border-rose-500/50';
-                    iconBadge.textContent = '💀';
-                    iconBadge.className = 'w-16 h-16 rounded-md bg-rose-500/20 border border-rose-400 flex items-center justify-center text-3xl';
-                    tagEl.textContent = `LAYAR KALAH (${loseName})`;
-                    tagEl.className = 'inline-block text-[11px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded bg-rose-500 text-white';
-                    headlineEl.textContent = '💥 KAMU KALAH DI DUEL INI!';
-                }
-
-                document.getElementById('modalSummaryReason').textContent = match.reason || '';
-                document.getElementById('modalCardBadgeWin').textContent = winCode;
-                document.getElementById('modalWinnerName').textContent = winName;
-                document.getElementById('modalCardBadgeLose').textContent = loseCode;
-                document.getElementById('modalLoserName').textContent = loseName;
-
-                document.getElementById('punishmentGiverName').textContent = winName;
-                document.getElementById('punishmentTargetName').textContent = loseName;
-                document.getElementById('punishmentResultText').textContent = match.punishment || 'Menunggu keputusan pemenang...';
-
-                const lockStatus = document.getElementById('punishmentLockStatusBadge');
-                lockStatus.textContent = match.punishmentLocked ? '🔒 Hukuman Resmi Dijatuhkan!' : '⏳ Menunggu keputusan pemenang...';
-
-                document.getElementById('winnerPunishmentInputArea').classList.toggle('hidden', !iAmWinner);
-                document.getElementById('loserPunishmentWaitArea').classList.toggle('hidden', iAmWinner);
-
-                const finishKey = `${this.state.activeView}-${winRole}-${match.reason}`;
-                if (this.lastRenderedFinishKey !== finishKey) {
-                    this.lastRenderedFinishKey = finishKey;
-                    if (iAmWinner) this.launchConfetti();
-                }
-            }
-
             // ======================================================
             // CONFETTI, TOAST & DOWNLOAD HTML
             // ======================================================
