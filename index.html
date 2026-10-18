@@ -180,6 +180,68 @@
             background: #334155;
             border-radius: 9999px;
         }
+        /* Animasi Masuk ala Draft Pick MLBB (Meluncur dari kiri/kanan dengan efek banting) */
+@keyframes mlbbSlideIn {
+    0% {
+        transform: scale(0.5) translateY(-100px);
+        opacity: 0;
+        filter: brightness(2);
+    }
+    60% {
+        transform: scale(1.05) translateY(10px);
+        opacity: 1;
+        filter: brightness(1.2);
+    }
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
+/* Animasi Kilatan Petir / Slash Listrik */
+@keyframes mlbbLightningSlash {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.2);
+        border-color: #38bdf8; /* Biru Energi */
+    }
+    50% {
+        box-shadow: 0 0 35px rgba(250, 204, 21, 0.8), inset 0 0 25px rgba(250, 204, 21, 0.5);
+        border-color: #facc15; /* Kuning Petir Emas */
+    }
+}
+
+/* Kelas Efek Animasi MLBB */
+.animate-mlbb-popup {
+    animation: mlbbSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-mlbb-lightning {
+    animation: mlbbLightningSlash 0.5s ease-in-out infinite;
+}
+
+/* Efek garis laser miring di background pop-up */
+.mlbb-slash-bg {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 27, 75, 0.95) 100%);
+    position: relative;
+    overflow: hidden;
+}
+.mlbb-slash-bg::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 15px,
+        rgba(250, 204, 21, 0.05) 15px,
+        rgba(250, 204, 21, 0.05) 30px
+    );
+    pointer-events: none;
+}
     </style>
 </head>
 
@@ -187,27 +249,35 @@
 
     <canvas id="confettiCanvas"></canvas>
 
-    <!-- POP-UP NOTIFIKASI TAWARAN (REAL-TIME BID POPUP) -->
-    <div id="modalBidPopup"
-        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4 pointer-events-auto">
-        <div id="modalBidPopupCard"
-            class="glass-card max-w-md w-full rounded-xl p-5 border-2 border-amber-400 shadow-2xl space-y-3 text-center animate-pop">
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-extrabold uppercase tracking-wider">
-                <i class="fa-solid fa-bell animate-bounce"></i> <span id="bidPopupTag">Notifikasi Tawaran</span>
-            </div>
-            <div id="bidPopupIcon" class="text-4xl">💰</div>
-            <h3 id="bidPopupHeadline" class="font-display font-extrabold text-xl sm:text-2xl text-white">
-                Player A menawar Rp 50.000!
+<!-- POP-UP NOTIFIKASI TAWARAN (GAYA DRAFT PICK MOBILE LEGENDS) -->
+<div id="modalBidPopup"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 pointer-events-auto">
+    <div id="modalBidPopupCard"
+        class="mlbb-slash-bg max-w-md w-full rounded-2xl p-6 border-2 border-amber-400 shadow-[0_0_50px_rgba(245,158,11,0.3)] space-y-4 text-center animate-mlbb-popup animate-mlbb-lightning relative">
+        
+        <!-- Efek Badge Header ala Turnamen -->
+        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-orange-500 text-slate-950 font-display font-black text-xs uppercase tracking-widest shadow-lg border border-white/40 flex items-center gap-1.5">
+            <i class="fa-solid fa-bolt text-slate-950 animate-bounce"></i> 
+            <span id="bidPopupTag">DRAFT BIDDING ALERT</span>
+        </div>
+
+        <div id="bidPopupIcon" class="text-5xl pt-2 filter drop-shadow-[0_0_12px_rgba(250,204,21,0.6)]">⚡</div>
+        
+        <div class="space-y-1">
+            <h3 id="bidPopupHeadline" class="font-display font-black text-2xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-400 tracking-wide drop-shadow-md">
+                Player A Menawar Rp 50.000!
             </h3>
-            <p id="bidPopupSubtext" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p id="bidPopupSubtext" class="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
                 Giliran lawan untuk menambahkan nominal atau melepas tawaran.
             </p>
-            <button onclick="window.app.closeBidPopup()"
-                class="w-full py-2.5 px-4 rounded-md bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-display font-extrabold text-xs sm:text-sm transition">
-                Mengerti & Lanjutkan
-            </button>
         </div>
+
+        <button onclick="window.app.closeBidPopup()"
+            class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-display font-black text-xs sm:text-sm tracking-wider uppercase shadow-lg shadow-cyan-500/30 transition transform active:scale-95 border border-cyan-300/40">
+            SIAP & LANJUTKAN DUEL <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
     </div>
+</div>
 
     <!-- HEADER -->
     <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-3 sm:px-6 py-2.5">
@@ -1811,20 +1881,20 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <button onclick="window.app.openPodiumModal()"
-                    class="py-3 px-4 rounded-md bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-display font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-trophy"></i> Podium
-                </button>
-                <button onclick="window.app.replayCurrentGame()"
-                    class="py-3 px-4 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white font-display font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-rotate-right"></i> Main Lagi
-                </button>
-                <button onclick="window.app.closeModalAndHub()"
-                    class="py-3 px-4 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 font-display font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-house"></i> Lobi
-                </button>
-            </div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+    <button onclick="window.app.openPodiumModal()" id="btnModalPodium" class="py-3 px-4 rounded-md bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-slate-950 font-display font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2">
+        <i class="fa-solid fa-trophy"></i> Podium
+    </button>
+    <button onclick="window.app.replayCurrentGame()" id="btnModalReplay" class="py-3 px-4 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-display font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
+        <i class="fa-solid fa-rotate-right"></i> Main Lagi
+    </button>
+    <button onclick="window.app.closeModalAndHub()" id="btnModalLobby" class="py-3 px-4 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 font-display font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
+        <i class="fa-solid fa-house"></i> Lobi
+    </button>
+</div>
+<div id="punishmentLockWarning" class="text-center text-xs text-amber-400 font-semibold hidden">
+    ⚠️ Pemenang wajib menekan tombol "Jatuhkan Hukuman" terlebih dahulu agar tombol Main Lagi terbuka!
+</div>
         </div>
     </div>
 
@@ -3471,7 +3541,7 @@
 
                 const rb = () => (theme.budget.min + Math.floor(Math.random() * (theme.budget.max - theme.budget.min + 1))) * theme.budget.step;
                 const budgetA = rb();
-                const budgetB = rb();
+                const budgetB = budgetA;
 
                 const firstMover = Math.random() < 0.5 ? 'A' : 'B';
                 const firstName = firstMover === 'A' ? this.state.playerAName : this.state.playerBName;
@@ -5274,6 +5344,19 @@
             }
 
             checkAndRenderGameOverModal() {
+                // Tambahkan di dalam fungsi checkAndRenderGameOverModal()
+const btnReplay = document.getElementById('btnModalReplay');
+const btnLobby = document.getElementById('btnModalLobby');
+const warnText = document.getElementById('punishmentLockWarning');
+
+if (btnReplay && btnLobby) {
+    // Tombol Main Lagi dan Lobi hanya bisa diklik jika hukuman sudah dikunci (punishmentLocked == true)
+    btnReplay.disabled = !match.punishmentLocked;
+    btnLobby.disabled = !match.punishmentLocked;
+    if (warnText) {
+        warnText.classList.toggle('hidden', match.punishmentLocked);
+    }
+}
                 const match = this.getActiveMatchObject();
                 const modal = document.getElementById('modalGameOver');
                 if (!match || match.status !== 'FINISHED') {
